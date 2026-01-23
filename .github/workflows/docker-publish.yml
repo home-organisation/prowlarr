@@ -153,7 +153,7 @@ jobs:
           private-key: ${{ secrets.GH_APP_PRIVATE_KEY }}
           repositories: ${{ steps.read_product.outputs.APP_PRODUCT }}
           
-      - name: Dispatch Workflow
+      - name: Dispatch Workflow for development
         uses: actions/github-script@v6
         with:
           github-token: ${{ steps.generate_token.outputs.token }}
@@ -167,6 +167,24 @@ jobs:
                 "image_name": "ghcr.io/${{ github.repository }}",
                 "new_tag": "${{ github.event.pull_request.head.sha }}",
                 "kustomization_path": "clusters/home-ovv/dev",
+                "jira_issue": "${{ github.event.pull_request.head.ref }}"
+              }
+            })
+
+      - name: Dispatch Workflow for production
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ steps.generate_token.outputs.token }}
+          script: |
+            github.rest.actions.createWorkflowDispatch({
+              owner: "${{ github.repository_owner }}", 
+              repo: "${{ steps.read_product.outputs.APP_PRODUCT }}", 
+              workflow_id: 'update_image.yml', 
+              ref: "${{ steps.read_product.outputs.APP_VERSION }}",
+              inputs: {
+                "image_name": "ghcr.io/${{ github.repository }}",
+                "new_tag": "${{ github.event.pull_request.head.sha }}",
+                "kustomization_path": "clusters/home-ovv/prod",
                 "jira_issue": "${{ github.event.pull_request.head.ref }}"
               }
             })
