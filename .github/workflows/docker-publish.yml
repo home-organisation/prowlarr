@@ -166,7 +166,7 @@ jobs:
               inputs: {
                 "image_name": "ghcr.io/${{ github.repository }}",
                 "new_tag": "${{ github.event.pull_request.head.sha }}",
-                "kustomization_path": "clusters/home-ovv/",
+                "kustomization_path": "clusters/home-ovv",
                 "jira_issue": "${{ github.event.pull_request.head.ref }}"
               }
             })
